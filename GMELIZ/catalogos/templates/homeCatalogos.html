@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block titulo %}
+    - Categorías
+{% endblock %}
+
+{% block encabezado %}
+    Todas las Categorías
+{% endblock %}
+
+{% block extraCSS %}
+<style>
+    .bgImageDiv1{
+        background-image: url('../static/img/rfid.jpg');
+    }
+    .bgImageDiv2{
+        background-image: url('../static/img/catalogos.jpg');
+    }
+    .bgImageDiv3{
+        background-image: url('../static/img/datos.jpg');
+    }
+
+    .bgImageCard{
+        background-size: cover;
+        background-position: center center;
+        height:200px;
+        border-radius:0 0 5px 0;
+    }
+    
+</style>
+{% endblock extraCSS %}
+
+{% block contenido%}
+    <div class="row">
+        <a class="col-lg-4 mb-0" href="{% url 'razasList' %}"> 
+            <div class="card shadow mb-4 border-left-success">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-success">Quesos</h6>
+                </div>
+                <div class="card-body bgImageDiv1 bgImageCard">
+                </div>
+            </div>
+        </a>
+
+        <a class="col-lg-4 mb-0" href="{% url 'grupoList' %}"> 
+            <div class="card shadow mb-4 border-left-warning">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-warning">Grupos de animales</h6>
+                </div>
+                <div class="card-body bgImageDiv2 bgImageCard">
+                </div>
+            </div>
+        </a>
+
+        <a class="col-lg-4 mb-0" href="{% url 'animalList' %}"> 
+            <div class="card shadow mb-4 border-left-danger">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-danger">Animales</h6>
+                </div>
+                <div class="card-body bgImageDiv3 bgImageCard">
+                </div>
+            </div>
+        </a>
+    </div>
+{% endblock %}

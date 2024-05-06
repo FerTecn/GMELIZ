@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block titulo %}
+    - Eliminar producto
+{% endblock %}
+
+{% block encabezado %}
+    Eliminar un producto de la tienda
+{% endblock %}
+
+{% block contenido %}
+<div class="card shadow mb-4 text-center">
+    <div class="card-header py-3">
+        <h1 class="m-0 font-weight-bold text-primary">Eliminar el producto {{item.producto}}</h1>
+    </div>
+    <div class="card-body">
+        <form action="" method="POST">
+            <p>¿Seguro que deseas eliminar el grupo?</p>
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-trash"></i>
+                </span>
+                <span class="text">Confirmar eliminación</span>
+            </button>
+
+            <a href="{% url 'productoList' %}" class="btn btn-success btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-arrow-left"></i>
+                </span>
+                <span class="text">Cancelar y volver</span>
+            </a>
+        </form>
+    </div>
+</div>
+{% endblock %}

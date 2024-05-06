@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block titulo %}
+    - Categorías de Productos
+{% endblock %}
+
+{% block extraCSS %}
+    <!-- Custom styles for this page -->
+    <link href="../../static/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block encabezado %}
+    Categorías de Productos
+{% endblock %}
+
+{% block botonSupIZQ %}
+<a href="{% url 'categoriaCreate' %}" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i
+    class="fas fa-plus fa-sm text-white-50"></i> Agregar nueva Categoría</a>
+{% endblock %}
+
+{% block contenido %}
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Datos de todas las categorías de productos</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Nombre de la categoría</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Nombre de la categoría</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </tfoot>                
+                    <tbody>
+                        {% for item in categorias %}
+                            <tr>
+                                <td>{{item.categoria}}</td>
+                                <td>
+                                    <a href="{% url 'categoriaUpdate' item.pk %}" class="btn btn-warning btn-circle"><i class="fas fa-pen"></i></a>
+                                    <a href="{% url 'categoriaDelete' item.pk %}" class="btn btn-danger btn-circle"><i class="fas fa-trash"></i></a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block plugins %}
+<!-- Page level plugins -->
+<script src="../../static/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="../../static/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+<!-- Page level custom scripts -->
+<script src="../../static/js/demo/datatables-demo.js"></script>
+
+{% endblock %}
