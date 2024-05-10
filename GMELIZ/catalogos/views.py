@@ -1,12 +1,13 @@
+from pyexpat.errors import messages
 from django.shortcuts import get_object_or_404, render, redirect, HttpResponse
-from django.http import JsonResponse #Devolver arreglos de datos RFID
-from django.utils import formats #Dar formatos a las fechas
 from django.core.files.storage import FileSystemStorage #Para archivos y directorios
 from django.contrib.auth.decorators import login_required #Forzar inicio de sesión
 
 import os
-from .models import Categoria, Producto
+from .models import Carrito, Categoria, ItemCarrito, Pedido, Producto
 from .forms import CategoriaForm, ProductoForm
+from django.db import transaction
+
 
 # Create your views here.
 #CRUD Categoria Producto
@@ -118,3 +119,97 @@ def productoDelete(request, pk):
         return redirect('productoList')
     return render(request, 'productoDelete.html', {'categoria': producto})
 
+def tienda(request):
+    productos = Producto.objects.all()
+    data = {'productos' : productos}
+    return render(request, "tienda.html", data)
+
+def agregar_producto_carrito(request, producto_id):
+    # Obtener el producto y la cantidad disponible en el inventario
+    producto = get_object_or_404(Producto, pk=producto_id)
+    cantidad_disponible = producto.inventario
+    
+    # Verificar si el producto está disponible en el inventario
+    if cantidad_disponible > 0:
+        # Obtener el carrito del usuario
+        carrito, _ = Carrito.objects.get_or_create(usuario=request.user)
+        
+        # Verificar si el producto ya está en el carrito
+        if carrito.productos.filter(pk=producto_id).exists():
+            # Si el producto ya está en el carrito, aumentar la cantidad en 1
+            item_carrito = ItemCarrito.objects.get(carrito=carrito, producto=producto)
+            item_carrito.cantidad += 1
+            item_carrito.save()
+        else:
+            # Si el producto no está en el carrito, agregarlo con una cantidad de 1
+            item_carrito = ItemCarrito.objects.create(carrito=carrito, producto=producto, cantidad=1)
+        
+        # Reducir la cantidad disponible en el inventario
+        producto.inventario -= 1
+        producto.save()
+    else:
+        # Si el inventario es 0, mostrar un mensaje indicando que el producto está agotado
+        return render(request, 'producto_agotado.html', {'producto': producto})
+        
+    return redirect('ver_carrito')
+
+def ver_carrito(request):
+    carrito, created = Carrito.objects.get_or_create(usuario=request.user)
+    return render(request, 'carrito.html', {'carrito': carrito})
+
+@transaction.atomic
+def realizar_pedido(request):
+    carrito, created = Carrito.objects.get_or_create(usuario=request.user)
+    pedido = Pedido.objects.create(usuario=request.user)
+
+    # Itera sobre los productos en el carrito y reduce el inventario
+    for item_carrito in carrito.itemcarrito_set.all():
+        producto = item_carrito.producto
+        cantidad_comprada = item_carrito.cantidad
+        producto.inventario -= cantidad_comprada
+        producto.save()
+
+    # Limpiar el carrito después de agregar los productos al pedido
+    carrito.productos.clear()
+
+    return redirect('detalle_pedido', pedido_id=pedido.id)  # Cambio aquí
+
+def confirmar_pedido(request):
+    carrito, created = Carrito.objects.get_or_create(usuario=request.user)
+    total_productos = carrito.itemcarrito_set.all().count()
+    total_pagar = carrito.total()
+
+    if request.method == 'POST':
+        pedido = Pedido.objects.create(usuario=request.user)
+        pedido.productos.set(carrito.productos.all())
+        carrito.productos.clear()
+        return redirect('detalle_pedido', pedido_id=pedido.id)
+
+    return render(request, 'confirmar_pedido.html', {'total_productos': total_productos, 'total_pagar': total_pagar})
+
+def ver_pedidos(request):
+    pedidos = Pedido.objects.filter(usuario=request.user)
+    return render(request, 'pedidos.html', {'pedidos': pedidos})
+
+def detalle_pedido(request, pedido_id):
+    pedido = get_object_or_404(Pedido, pk=pedido_id)
+    # Aquí podrías agregar lógica adicional si necesitas procesar más datos antes de renderizar el template
+    return render(request, 'detalle_pedido.html', {'pedido': pedido})
+
+def producto_agotado(request):
+    # Aquí puedes agregar lógica adicional si es necesario
+    return render(request, 'producto_agotado.html')
+
+def eliminar_producto_carrito(request, producto_id):
+    # Obtener el producto del carrito
+    producto = get_object_or_404(ItemCarrito, pk=producto_id)
+    # Eliminar el producto del carrito
+    producto.delete()
+    return redirect('ver_carrito')
+
+def limpiar_carrito(request):
+    # Obtener el carrito del usuario
+    carrito = Carrito.objects.get(usuario=request.user)
+    # Eliminar todos los productos del carrito
+    carrito.productos.clear()
+    return redirect('ver_carrito')

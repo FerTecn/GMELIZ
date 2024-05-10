@@ -67,6 +67,7 @@
                                 <td>
                                     <a href="{% url 'productoUpdate' item.pk %}" class="btn btn-warning btn-circle"><i class="fas fa-pen"></i></a>
                                     <a href="{% url 'productoDelete' item.pk %}" class="btn btn-danger btn-circle"><i class="fas fa-trash"></i></a>
+                                    <a href="{% url 'agregar_producto_carrito' item.pk %}" class="btn btn-primary btn-circle"><i class="fas fa-shopping-cart"></i></a>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -74,6 +75,8 @@
                 </table>
             </div>
         </div>
+
+        
     </div>
 {% endblock %}
 

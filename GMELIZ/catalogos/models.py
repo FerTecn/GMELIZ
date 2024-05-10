@@ -1,11 +1,18 @@
 from django.db import models
-from django.db.models.signals import pre_delete
-from django.dispatch import receiver
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission, Group
 
 import os
+# administradores = Group.objects.get(name='Administrador')
+# clientes = Group.objects.get(name='Cliente')
 
-# Create your models here.
+# # Create your models here.
+# class CustomPermission(models.Model):
+#     # Definir permisos personalizados según tus necesidades
+#     add_product = Permission.objects.get(name='Puede agregar producto')
+#     edit_product = Permission.objects.get(name='Puede editar producto')
+#     delete_product = Permission.objects.get(name='Puede eliminar producto')
+
+
 def imagen_producto_path(instance, filename):
     # Generar el nombre de archivo utilizando el codigo y la extensión original
     ext = filename.split('.')[-1]
@@ -30,15 +37,21 @@ class Producto(models.Model):
     inventario = models.PositiveIntegerField(default=0)
 
     def __str__(self):
-        return "%s de tipo %s a costo de %s" % (self.categoria, self.producto, self.precio)
+        return "%s de tipo %s a costo de %s" % (self.categoria, self.producto, self.precio) 
 
 class Carrito(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     productos = models.ManyToManyField(Producto, through='ItemCarrito')
 
-    def calcular_total(self):
-        total = sum(item.subtotal() for item in self.itemcarrito_set.all())
-        return total
+    def __str__(self):
+        return f"Carrito de {self.usuario.username}"
+
+    def total(self):
+        return sum(item.subtotal() for item in self.itemcarrito_set.all())
+    
+    def totalproductos(self):
+        return sum(item.productostotal() for item in self.itemcarrito_set.all())
+    
 
 class ItemCarrito(models.Model):
     carrito = models.ForeignKey(Carrito, on_delete=models.CASCADE)
@@ -47,8 +60,22 @@ class ItemCarrito(models.Model):
 
     def subtotal(self):
         return self.producto.precio * self.cantidad
-
+    
+    def productostotal(self):
+        return self.cantidad
+    
 class Pedido(models.Model):
-    carrito = models.OneToOneField(Carrito, on_delete=models.CASCADE)
-    fecha_pedido = models.DateTimeField(auto_now_add=True)
-    completado = models.BooleanField(default=False)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    fecha_realizado = models.DateTimeField(auto_now_add=True)
+    fecha_completado = models.DateTimeField(null=True, blank=True)
+    ESTADOS = (
+        ('Pendiente', 'Pendiente'),
+        ('Completado', 'Completado'),
+    )
+    estatus = models.CharField(max_length=20, choices=ESTADOS, default='Pendiente')
+    productos = models.ManyToManyField(Producto, related_name='pedidos')
+
+    def __str__(self):
+        return f"Pedido #{self.pk} de {self.usuario.username}"
+    
+    

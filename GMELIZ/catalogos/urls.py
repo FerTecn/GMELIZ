@@ -30,6 +30,15 @@ urlpatterns = [
     path('producto/editar/<int:pk>', views.productoUpdate, name='productoUpdate'),
     path('producto/eliminar/<int:pk>', views.productoDelete, name='productoDelete'),
 
-    # path('buscar_ganado', views.buscar_ganado, name='buscar_ganado'),
-
+    path('tienda/', views.tienda, name='tienda'),
+    path('producto_agotado/', views.producto_agotado, name='producto_agotado'),
+    path('eliminar_producto/<int:producto_id>/', views.eliminar_producto_carrito, name='eliminar_producto_carrito'),
+    path('limpiar_carrito/', views.limpiar_carrito, name='limpiar_carrito'),
+    
+    path('agregar_producto/<int:producto_id>/', views.agregar_producto_carrito, name='agregar_producto_carrito'),
+    path('ver_carrito/', views.ver_carrito, name='ver_carrito'),
+    path('realizar_pedido/', views.realizar_pedido, name='realizar_pedido'),
+    path('ver_pedidos/', views.ver_pedidos, name='ver_pedidos'),
+    path('confirmar-pedido/', views.confirmar_pedido, name='confirmar_pedido'),
+    path('detalle_pedido/<int:pedido_id>/', views.detalle_pedido, name='detalle_pedido'),
 ]

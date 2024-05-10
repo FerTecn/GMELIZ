@@ -79,9 +79,15 @@
 
             <li class="nav-item">
                 <a class="nav-link" href={% url "productoList" %}>
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Todos los productos</span></a>
+                    <i class="fas fa-cheese"></i>
+                    <span>CRUD de los productos</span></a>
             </li>
+
+            {% comment %} <li class="nav-item">
+                <a class="nav-link" href={% url "tienda" %}>
+                    <i class="fas fa-cheese"></i>
+                    <span>Tienda</span></a>
+            </li> {% endcomment %}
             
             <!-- Divider -->
             <hr class="sidebar-divider">
@@ -90,25 +96,6 @@
             <div class="sidebar-heading">
                 Más Opciones
             </div>
-
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="true"
-                    aria-controls="collapsePages">
-                    <i class="fas fa-fw fa-folder"></i>
-                    <span>Categorías</span>
-                </a>
-                {% comment %} <div id="collapsePages" class="collapse" aria-labelledby="headingPages"
-                    data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Catálogos:</h6>
-                        <a class="collapse-item" href={% url "homeCatalogos" %}>Todas las categorías</a>
-                        <a class="collapse-item" href={% url "animalList" %}>Quesos</a>
-                        <a class="collapse-item" href={% url "razasList" %}>Leches</a>
-                        <a class="collapse-item" href={% url "grupoList" %}>Yogurth</a>
-                    </div>
-                </div> {% endcomment %}
-            </li>
 
             <li class="nav-item">
                 <a class="nav-link" href={% url "acerca" %}>
@@ -270,11 +257,22 @@
                         </li>
 
                         <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-shopping-basket fa-fw"></i>
+                            <a class="nav-link" href="{% url "ver_carrito" %}" role="button"
+                                aria-expanded="false">
+                                <i class="fas fa-shopping-cart fa-fw"></i>
                                 <!-- Counter - Alerts -->
-                                <span class="badge badge-danger badge-counter">Numero de objetos</span>
+                                {% if request.user.is_authenticated %}
+                                    <span class="badge badge-danger badge-counter">
+                                        {{ carrito_count }}
+                                    </span>
+                                {% endif %}
+                            </a>
+                        </li>
+
+                        <li class="nav-item dropdown no-arrow mx-1">
+                            <a class="nav-link" href="{% url "ver_pedidos" %}" role="button"
+                                aria-expanded="false">
+                                <i class="fas fa-list-alt fa-fw"></i>
                             </a>
                         </li>
                         
@@ -318,7 +316,7 @@
                                         <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                         Cerrar sesión
                                     </a>
-                                {% comment %} {% endif %} {% endcomment %}
+                                
                             </div>
                         </li>
 
@@ -334,8 +332,7 @@
                         <h1></h1>
                         {% block botonSupIZQ %}
                         {% endblock %}
-                        <!-- <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a> -->
+                        
                     </div>
                     <!-- Content Row -->
                     {% block contenido %}

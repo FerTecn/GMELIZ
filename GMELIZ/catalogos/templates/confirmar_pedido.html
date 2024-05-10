@@ -1,0 +1,40 @@
+
+
+{% extends 'base.html' %}
+
+{% block titulo %}
+    - Confirmar Pedido
+{% endblock %}
+
+{% block encabezado %}
+    Confirmar Pedido
+{% endblock %}
+
+{% block contenido %}
+<div class="card shadow mb-4 text-center">
+    <div class="card-header py-3">
+        <h1 class="m-0 font-weight-bold text-primary">Confirmación de pedido</h1>
+    </div>
+    <div class="card-body">
+        <form action="{% url 'realizar_pedido' %}" method="post">
+            <h5>Estás a punto de realizar un pedido con los siguientes detalles:</h5>
+            <p>Total de productos en el carrito: {{ total_productos }}</p>
+            <p>Total a pagar: ${{ total_pagar }}</p>
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-trash"></i>
+                </span>
+                <span class="text">Confirmar pedido</span>
+            </button>
+
+            <a href="{% url 'ver_carrito' %}" class="btn btn-warning btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-arrow-left"></i>
+                </span>
+                <span class="text">Cancelar y volver</span>
+            </a>
+        </form>
+    </div>
+</div>
+{% endblock %}

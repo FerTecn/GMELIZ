@@ -1,0 +1,42 @@
+
+{% extends 'base.html' %}
+
+{% block titulo %}
+    - Detalles del Pedido
+{% endblock %}
+
+{% block encabezado %}
+    Detalles del Pedido
+{% endblock %}
+
+{% block contenido %}
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Detalles del Pedido</h6>
+    </div>
+    <div class="card-body">
+        {% for pedido in pedidos %}
+        <div class="card mb-3">
+            <div class="card-header">
+                Pedido #{{ pedido.id }}
+            </div>
+            <div class="card-body">
+                <p>Fecha Realizado: {{ pedido.fecha_realizado }}</p>
+                <p>Estatus: {{ pedido.estatus }}</p>
+                <p>Productos:</p>
+                <ul>
+                    {% for producto in pedido.productos.all %}
+                        <li>{{ producto }} - Cantidad: {{ producto.itemcarrito_set.first.cantidad }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'detalle_pedido' pedido.id %}" class="btn btn-success">Ver Detalles</a>
+            </div>
+        </div>
+        {% empty %}
+        <p>No tienes pedidos realizados.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

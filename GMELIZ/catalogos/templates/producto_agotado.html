@@ -1,0 +1,13 @@
+<!-- producto_agotado.html -->
+
+{% extends 'base.html' %}
+
+{% block titulo %}
+    Producto Agotado
+{% endblock %}
+
+{% block contenido %}
+    <div class="alert alert-warning" role="alert">
+        El producto "{{ producto.producto }}" está agotado actualmente.
+    </div>
+{% endblock %}
