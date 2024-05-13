@@ -4,97 +4,165 @@
     - Productos en la tienda
 {% endblock %}
 
-{% block extraCSS %}
-    <!-- Custom styles for this page -->
-    <link href="../../static/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
-    <style>
-        .circle-background {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            overflow: hidden;
-            object-fit: cover;
-        }
-    </style>
-{% endblock %}
 
 {% block encabezado %}
     Listado completo de todos los productos
 {% endblock %}
 
 {% block botonSupIZQ %}
+{% if perms.catalogos.add_producto %}
 <a href="{% url 'productoCreate' %}" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i
     class="fas fa-add fa-plus text-white-50"></i> Agregar nuevo producto</a>
+    {% endif %}
+{% endblock %}
+
+{% block extraCSS %}
+<style>
+    /* Estilo para la imagen rectangular */
+    .image-container {
+        position: relative;
+        width: 100%;
+        height: 200px; /* Altura deseada */
+        overflow: hidden;
+        border-radius:5px;
+    }
+
+    .image-container img {
+        width: 100%;
+        height: 100%; /* La imagen ocupará toda la altura del contenedor */
+        object-fit: cover; /* Evita la deformación */
+    }
+
+    .image-container::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 50px; /* Altura del degradado */
+        background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+        pointer-events: none;
+    }
+
+    
+    
+</style>
 {% endblock %}
 
 {% block contenido %}
-    <!-- DataTales Example -->
-    <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Datos de todos los productos</h6>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>Foto</th>
-                            <th>Código</th>
-                            <th>Producto</th>
-                            <th>Precio</th>
-                            <th>Disponibles en<br>tienda</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tfoot>
-                        <tr>
-                            <th>Foto</th>
-                            <th>Código</th>
-                            <th>Producto</th>
-                            <th>Precio</th>
-                            <th>Disponibles en<br>tienda</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </tfoot>                
-                    <tbody>
-                        {% for item in productos %}
-                            <tr>
-                                <td><img src="../../../{{item.imagen}}" alt="{{item.imagen}}" class="circle-background"></td>
-                                <td>{{item.codigo}}</td>
-                                <td>{{item.categoria}} {{item.producto}}</td>
-                                <td>${{item.precio}}</td>
-                                <td>
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <input type="text" id="searchInput" class="form-control" placeholder="Buscar por nombre...">
+    </div>
+    <div class="col-md-6 mb-4">
+        <select id="categoriaSelect" class="form-control">
+            <option value="">Todas las categorías</option>
+            {% for categoria in categorias %}
+                <option value="{{ categoria }}">{{ categoria }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+
+<div class="row">
+        {% for item in productos %}
+            <div class="col-xl-3 col-md-6 mb-4 producto-card" data-categoria="{{ item.categoria|lower }}">
+                <div class="card shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col">
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <!-- Ajustar el tamaño de la imagen -->
+                                    <div class="image-container">
+                                        <!-- Ajustar el tamaño de la imagen -->
+                                        <img src="../../../{{item.imagen}}" alt="{{item.imagen}}" class="img-fluid">
+                                    </div>
+                                    
+                                </div>
+                                <div class="text-lg font-weight-bold text-primary text-uppercase mb-1">
+                                {{ item.categoria }} {{ item.producto }}</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    Precio: ${{ item.precio }}
+                                    Disponibles: {{item.inventario}}
+                                    <div class="my-2"></div>
                                     {% if item.inventario == 0 %}
                                     <div class="alert alert-warning" role="alert">
                                         Agotado
                                     </div>
                                     {% else %}
-                                    {{item.inventario}}
+                                    <a href="{% url 'agregar_producto_carrito' item.pk %}" class="btn btn-success btn-icon-split">
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-shopping-cart"></i>
+                                        </span>
+                                        <span class="text">Agregar al carrito</span>
+                                    </a>
                                     {% endif %}
 
-                                </td>
-                                <td>
-                                    <a href="{% url 'productoUpdate' item.pk %}" class="btn btn-warning btn-circle"><i class="fas fa-pen"></i></a>
-                                    <a href="{% url 'productoDelete' item.pk %}" class="btn btn-danger btn-circle"><i class="fas fa-trash"></i></a>
-                                    <a href="{% url 'agregar_producto_carrito' item.pk %}" class="btn btn-primary btn-circle"><i class="fas fa-shopping-cart"></i></a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                                    <div class="my-2"></div>
+                                    <a href="{% url 'productoDetail' item.pk %}" class="btn btn-info btn-icon-split">
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-eye"></i>
+                                        </span>
+                                        <span class="text">Ver detalles</span>
+                                    </a>
+                                    <div class="my-2"></div>
+                                    {% if perms.catalogos.change_producto or perms.catalogos.delete_producto %}
+                                        <a href="{% url 'productoUpdate' item.pk %}" class="btn btn-warning btn-circle"><i class="fas fa-pen"></i></a> 
+                                        <a href="{% url 'productoDelete' item.pk %}" class="btn btn-danger btn-circle"><i class="fas fa-trash"></i></a>
+                                    {% endif %}
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-
-        
-    </div>
+        {% endfor %}
+</div>
 {% endblock %}
 
 {% block plugins %}
 <!-- Page level plugins -->
-<script src="../../static/vendor/datatables/jquery.dataTables.min.js"></script>
-<script src="../../static/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Buscar productos por nombre
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', function() {
+            const searchText = this.value.toLowerCase();
+            const categoriaSelect = document.getElementById('categoriaSelect');
+            const categoriaSeleccionada = categoriaSelect.value.toLowerCase();
+            const productoCards = document.querySelectorAll('.producto-card');
+            productoCards.forEach(function(card) {
+                const nombreProducto = card.querySelector('.text-lg').textContent.toLowerCase();
+                const categoriaProducto = card.dataset.categoria;
+                const nombreCoincide = nombreProducto.includes(searchText);
+                const categoriaCoincide = categoriaSeleccionada === '' || categoriaProducto === categoriaSeleccionada;
+                if (nombreCoincide && categoriaCoincide) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
 
-<!-- Page level custom scripts -->
-<script src="../../static/js/demo/datatables-demo.js"></script>
+        // Filtrar productos por categoría
+        const categoriaSelect = document.getElementById('categoriaSelect');
+        categoriaSelect.addEventListener('change', function() {
+            const searchText = searchInput.value.toLowerCase();
+            const categoriaSeleccionada = this.value.toLowerCase();
+            const productoCards = document.querySelectorAll('.producto-card');
+            productoCards.forEach(function(card) {
+                const categoriaProducto = card.dataset.categoria;
+                const categoriaCoincide = categoriaSeleccionada === '' || categoriaProducto === categoriaSeleccionada;
+                const nombreCoincide = card.querySelector('.text-lg').textContent.toLowerCase().includes(searchText);
+                if (categoriaCoincide && nombreCoincide) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
 
 {% endblock %}
