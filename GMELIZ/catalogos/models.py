@@ -2,16 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User, Permission, Group
 
 import os
-# administradores = Group.objects.get(name='Administrador')
-# clientes = Group.objects.get(name='Cliente')
-
 # # Create your models here.
-# class CustomPermission(models.Model):
-#     # Definir permisos personalizados según tus necesidades
-#     add_product = Permission.objects.get(name='Puede agregar producto')
-#     edit_product = Permission.objects.get(name='Puede editar producto')
-#     delete_product = Permission.objects.get(name='Puede eliminar producto')
-
 
 def imagen_producto_path(instance, filename):
     # Generar el nombre de archivo utilizando el codigo y la extensión original
@@ -73,9 +64,18 @@ class Pedido(models.Model):
         ('Completado', 'Completado'),
     )
     estatus = models.CharField(max_length=20, choices=ESTADOS, default='Pendiente')
-    productos = models.ManyToManyField(Producto, related_name='pedidos')
+    productos = models.ManyToManyField(Producto, through='DetallePedido')
 
     def __str__(self):
         return f"Pedido #{self.pk} de {self.usuario.username}"
+
+class DetallePedido(models.Model):
+    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField(default=1)
+
+    def __str__(self):
+        return f"{self.cantidad} x {self.producto.producto} en Pedido #{self.pedido.pk}"
+
     
     

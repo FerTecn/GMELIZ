@@ -24,8 +24,8 @@
         
         <h5>Productos en el Pedido:</h5>
         <ul>
-            {% for producto in pedido.productos.all %}
-                <li>{{ producto }} - Cantidad: {{ producto.itemcarrito_set.first.cantidad }}</li>
+            {% for detalle_pedido in detalles_pedido %}
+                <li>{{ detalle_pedido.cantidad }} x {{ detalle_pedido.producto }} - Precio: {{ detalle_pedido.producto.precio }}</li>
             {% endfor %}
         </ul>
     </div>

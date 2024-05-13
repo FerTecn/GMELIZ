@@ -81,7 +81,7 @@ WSGI_APPLICATION = 'GMELIZ.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'gmeliz.sqlite3',
+        'NAME': BASE_DIR / 'dbgmeliz.sqlite3',
     }
 }
 

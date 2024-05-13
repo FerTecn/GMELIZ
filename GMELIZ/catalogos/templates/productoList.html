@@ -42,7 +42,7 @@
                             <th>Código</th>
                             <th>Producto</th>
                             <th>Precio</th>
-                            <th>Descripción</th>
+                            <th>Disponibles en<br>tienda</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -52,7 +52,7 @@
                             <th>Código</th>
                             <th>Producto</th>
                             <th>Precio</th>
-                            <th>Descripción</th>
+                            <th>Disponibles en<br>tienda</th>
                             <th>Acciones</th>
                         </tr>
                     </tfoot>                
@@ -63,7 +63,16 @@
                                 <td>{{item.codigo}}</td>
                                 <td>{{item.categoria}} {{item.producto}}</td>
                                 <td>${{item.precio}}</td>
-                                <td>{{item.descripcion}}</td>
+                                <td>
+                                    {% if item.inventario == 0 %}
+                                    <div class="alert alert-warning" role="alert">
+                                        Agotado
+                                    </div>
+                                    {% else %}
+                                    {{item.inventario}}
+                                    {% endif %}
+
+                                </td>
                                 <td>
                                     <a href="{% url 'productoUpdate' item.pk %}" class="btn btn-warning btn-circle"><i class="fas fa-pen"></i></a>
                                     <a href="{% url 'productoDelete' item.pk %}" class="btn btn-danger btn-circle"><i class="fas fa-trash"></i></a>
