@@ -44,8 +44,12 @@
                             <tr>
                                 <td>{{item.categoria}}</td>
                                 <td>
-                                    <a href="{% url 'categoriaUpdate' item.pk %}" class="btn btn-warning btn-circle"><i class="fas fa-pen"></i></a>
-                                    <a href="{% url 'categoriaDelete' item.pk %}" class="btn btn-danger btn-circle"><i class="fas fa-trash"></i></a>
+                                    {% if perms.catalogos.change_categoria or perms.catalogos.delete_categoria %}
+                                        <a href="{% url 'categoriaUpdate' item.pk %}" class="btn btn-warning btn-circle"><i class="fas fa-pen"></i></a>
+                                        <a href="{% url 'categoriaDelete' item.pk %}" class="btn btn-danger btn-circle"><i class="fas fa-trash"></i></a>
+                                    {% else %}
+                                        <h5>No tienes permisos para ejecutar una acción</h5>
+                                    {% endif %}
                                 </td>
                             </tr>
                         {% endfor %}
