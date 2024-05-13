@@ -10,6 +10,15 @@
 {% endblock %}
 
 {% block contenido %}
+<div class="row">
+    <a href="{% url 'ver_pedidos' %}" class="btn btn-success btn-icon-split">
+        <span class="icon text-white-50">
+            <i class="fas fa-arrow-left"></i>
+        </span>
+        <span class="text">Volver a mis pedidos</span>
+    </a>
+</div>
+<div class="my-2"></div>
 <div class="card shadow mb-4">
     <div class="card-header py-3">
         <h6 class="m-0 font-weight-bold text-primary">Detalles del Pedido</h6>
@@ -25,9 +34,10 @@
         <h5>Productos en el Pedido:</h5>
         <ul>
             {% for detalle_pedido in detalles_pedido %}
-                <li>{{ detalle_pedido.cantidad }} x {{ detalle_pedido.producto }} - Precio: {{ detalle_pedido.producto.precio }}</li>
+                <li>{{ detalle_pedido.cantidad }} x {{ detalle_pedido.producto.categoria }} {{ detalle_pedido.producto.producto }} - Precio: ${{ detalle_pedido.producto.precio }}</li>
             {% endfor %}
         </ul>
+        <h5>Total: ${{ total_pagado }} </h5>
     </div>
 </div>
 {% endblock %}
