@@ -7,6 +7,13 @@
 {% endblock %}
 
 {% block contenido %}
+    <a href="{% url 'productoList' %}" class="btn btn-success btn-icon-split">
+        <span class="icon text-white-50">
+            <i class="fas fa-arrow-left"></i>
+        </span>
+        <span class="text">Volver a la tienda</span>
+    </a>
+    <div class="my-2"></div>
     <div class="alert alert-warning" role="alert">
         El producto "{{ producto.producto }}" está agotado actualmente.
     </div>
