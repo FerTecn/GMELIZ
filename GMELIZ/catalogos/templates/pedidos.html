@@ -26,7 +26,7 @@
                 <p>Productos:</p>
                 <ul>
                     {% for detalle_pedido in pedido.detallepedido_set.all %}
-                        <li>{{ detalle_pedido.producto }} - Cantidad: {{ detalle_pedido.cantidad }}</li>
+                    <li>{{ detalle_pedido.cantidad }} x {{ detalle_pedido.producto.categoria }} {{ detalle_pedido.producto.producto }} - Precio: ${{ detalle_pedido.producto.precio }}</li>
                     {% endfor %}
                 </ul>
             </div>
