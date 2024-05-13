@@ -5,12 +5,19 @@ from django.contrib.auth.decorators import login_required #Forzar inicio de sesi
 
 import os
 from .models import Carrito, Categoria, DetallePedido, ItemCarrito, Pedido, Producto
+from django.db.models import F, Sum
 from .forms import CategoriaForm, ProductoForm
 from django.db import transaction
+from django.contrib.auth.decorators import user_passes_test
+
 
 
 # Create your views here.
 #CRUD Categoria Producto
+@login_required(login_url='signin')
+def accesodenegado(request):
+    return render(request, 'denegado.html')
+
 @login_required(login_url='signin')
 def categoriaList(request):
     categorias = Categoria.objects.all()
@@ -18,6 +25,7 @@ def categoriaList(request):
     return render(request, "categoriaList.html", data)
 
 @login_required(login_url='signin')
+@user_passes_test(lambda u: u.has_perm('catalogos.add_categoria'), login_url='accesodenegado')
 def categoriaCreate(request):
     if request.method == 'POST':
         form = CategoriaForm(request.POST)
@@ -29,6 +37,7 @@ def categoriaCreate(request):
         return render(request, 'categoriaCreate.html', {'form' : form})
 
 @login_required(login_url='signin')
+@user_passes_test(lambda u: u.has_perm('catalogos.change_categoria'), login_url='accesodenegado')
 def categoriaUpdate(request, pk):
     categoria = get_object_or_404(Categoria, pk=pk)
     if request.method == 'POST':
@@ -41,6 +50,7 @@ def categoriaUpdate(request, pk):
     return render(request, 'categoriaUpdate.html', {'form': form})
 
 @login_required(login_url='signin')
+@user_passes_test(lambda u: u.has_perm('catalogos.delete_categoria'), login_url='accesodenegado')
 def categoriaDelete(request, pk):
     categoria = get_object_or_404(Categoria, pk=pk)
     if request.method == 'POST':
@@ -51,11 +61,30 @@ def categoriaDelete(request, pk):
 # CRUD Productos
 @login_required(login_url='signin')
 def productoList(request):
+    # Obtener todos los productos
     productos = Producto.objects.all()
-    data = {'productos' : productos}
+
+    # Obtener categorías únicas
+    categorias = Categoria.objects.all()
+
+    # Filtrar por categoría si se ha seleccionado alguna
+    categoria_seleccionada = request.GET.get('categoria')
+    if categoria_seleccionada:
+        productos = productos.filter(categoria=categoria_seleccionada)
+
+    data = {
+        'productos': productos,
+        'categorias': categorias,
+    }
     return render(request, "productoList.html", data)
 
 @login_required(login_url='signin')
+def productoDetail(request, pk):
+    producto = get_object_or_404(Producto, pk=pk)
+    return render(request, "productoDetails.html", {'producto': producto})
+
+@login_required(login_url='signin')
+@user_passes_test(lambda u: u.has_perm('catalogos.create_producto'), login_url='accesodenegado')
 def productoCreate(request):
     if request.method == 'POST':
         form = ProductoForm(request.POST, request.FILES)
@@ -78,6 +107,7 @@ def productoCreate(request):
         return render(request, 'productoCreate.html', {'form' : form})
 
 @login_required(login_url='signin')
+@user_passes_test(lambda u: u.has_perm('catalogos.change_producto'), login_url='accesodenegado')
 def productoUpdate(request, pk):
     producto = get_object_or_404(Producto, pk=pk)
     if request.method == 'POST':
@@ -108,6 +138,7 @@ def productoUpdate(request, pk):
     return render(request, 'productoUpdate.html', {'producto': producto,'form': form})
 
 @login_required(login_url='signin')
+@user_passes_test(lambda u: u.has_perm('catalogos.delete_producto'), login_url='accesodenegado')
 def productoDelete(request, pk):
     producto = get_object_or_404(Producto, pk=pk)
     if request.method == 'POST':
@@ -119,10 +150,6 @@ def productoDelete(request, pk):
         return redirect('productoList')
     return render(request, 'productoDelete.html', {'categoria': producto})
 
-def tienda(request):
-    productos = Producto.objects.all()
-    data = {'productos' : productos}
-    return render(request, "tienda.html", data)
 
 def agregar_producto_carrito(request, producto_id):
     # Obtener el producto y la cantidad disponible en el inventario
@@ -197,7 +224,10 @@ def ver_pedidos(request):
 def detalle_pedido(request, pedido_id):
     pedido = get_object_or_404(Pedido, pk=pedido_id)
     detalles_pedido = DetallePedido.objects.filter(pedido=pedido)
-    return render(request, 'detalle_pedido.html', {'pedido': pedido, 'detalles_pedido': detalles_pedido})
+
+    total_pagado = detalles_pedido.aggregate(total=Sum(F('producto__precio') * F('cantidad')))['total']
+
+    return render(request, 'detalle_pedido.html', {'pedido': pedido, 'detalles_pedido': detalles_pedido, 'total_pagado': total_pagado})
 
 def producto_agotado(request):
     # Aquí puedes agregar lógica adicional si es necesario
