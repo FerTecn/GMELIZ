@@ -26,11 +26,11 @@ urlpatterns = [
     path('categoria/eliminar/<int:pk>', views.categoriaDelete, name='categoriaDelete'),
 
     path('producto/lista', views.productoList, name='productoList'),
+    path('producto/detalles/<int:pk>', views.productoDetail, name='productoDetail'),
     path('producto/agregar', views.productoCreate, name='productoCreate'),
     path('producto/editar/<int:pk>', views.productoUpdate, name='productoUpdate'),
     path('producto/eliminar/<int:pk>', views.productoDelete, name='productoDelete'),
 
-    path('tienda/', views.tienda, name='tienda'),
     path('producto_agotado/', views.producto_agotado, name='producto_agotado'),
     path('eliminar_producto/<int:producto_id>/', views.eliminar_producto_carrito, name='eliminar_producto_carrito'),
     path('limpiar_carrito/', views.limpiar_carrito, name='limpiar_carrito'),
@@ -41,4 +41,5 @@ urlpatterns = [
     path('ver_pedidos/', views.ver_pedidos, name='ver_pedidos'),
     path('confirmar-pedido/', views.confirmar_pedido, name='confirmar_pedido'),
     path('detalle_pedido/<int:pedido_id>/', views.detalle_pedido, name='detalle_pedido'),
+    path('denegado', views.accesodenegado, name='accesodenegado'),
 ]
