@@ -71,16 +71,19 @@
                     <span>Inicio</span></a>
             </li>
 
-            <li class="nav-item">
-                <a class="nav-link" href={% url "categoriaList" %}>
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Todas las Categorías</span></a>
-            </li>
+            {% if perms.catalogos.change_producto or perms.catalogos.delete_producto %}
+                <li class="nav-item">
+                    <a class="nav-link" href={% url "categoriaList" %}>
+                        <i class="fas fa-fw fa-tachometer-alt"></i>
+                        <span>Todas las Categorías</span></a>
+                </li>
+            {% endif %}
+            
 
             <li class="nav-item">
                 <a class="nav-link" href={% url "productoList" %}>
                     <i class="fas fa-cheese"></i>
-                    <span>CRUD de los productos</span></a>
+                    <span>Productos</span></a>
             </li>
 
             

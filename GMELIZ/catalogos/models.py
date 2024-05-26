@@ -55,6 +55,16 @@ class ItemCarrito(models.Model):
     def productostotal(self):
         return self.cantidad
     
+    def incrementar_cantidad(self):
+        if self.cantidad < self.producto.inventario:
+            self.cantidad += 1
+            self.save()
+    
+    def decrementar_cantidad(self):
+        if self.cantidad > 1:
+            self.cantidad -= 1
+            self.save()
+    
 class Pedido(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     fecha_realizado = models.DateTimeField(auto_now_add=True)

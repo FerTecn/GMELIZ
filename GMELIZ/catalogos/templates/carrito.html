@@ -65,10 +65,19 @@
                             <td>{{ item.producto.producto }}</td>
                             <td>{{ item.producto.categoria }}</td>
                             <td>{{ item.producto.precio }}</td>
-                            <td>{{ item.cantidad }}</td>
+                            <td>
+                                <div class="input-group" ">
+                                    <div class="input-group-prepend">
+                                        <a href="{% url 'decrementar_cantidad' item.id %}" class="btn btn-outline-secondary">-</a>
+                                    </div>
+                                    <input type="text" class="form-control text-center" value="{{ item.cantidad }}" readonly>
+                                    <div class="input-group-append">
+                                        <a href="{% url 'incrementar_cantidad' item.id %}" class="btn btn-outline-secondary">+</a>
+                                    </div>
+                                </div>
+                            </td>
                             <td>{{ item.subtotal }}</td>
                             <td>
-                                <!-- Form to delete the product from the cart -->
                                 <form action="{% url 'eliminar_producto_carrito' item.pk %}" method="post">
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>

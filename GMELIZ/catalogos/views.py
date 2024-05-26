@@ -246,3 +246,15 @@ def limpiar_carrito(request):
     # Eliminar todos los productos del carrito
     carrito.productos.clear()
     return redirect('ver_carrito')
+
+@login_required(login_url='signin')
+def incrementar_cantidad(request, item_id):
+    item_carrito = get_object_or_404(ItemCarrito, id=item_id)
+    item_carrito.incrementar_cantidad()
+    return redirect('ver_carrito')
+
+@login_required(login_url='signin')
+def decrementar_cantidad(request, item_id):
+    item_carrito = get_object_or_404(ItemCarrito, id=item_id)
+    item_carrito.decrementar_cantidad()
+    return redirect('ver_carrito')
