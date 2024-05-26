@@ -4,18 +4,20 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
 
 class SignupForm(UserCreationForm):
+    user_type = forms.ChoiceField(
+        choices=[('Cliente', 'Cliente'), ('Vendedor', 'Vendedor')],
+        widget=forms.Select(attrs={'class': 'form-control blurInput'}),
+        initial='Cliente',
+    )
 
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ['first_name', 'last_name', 'username', 'email', 'password1', 'password2']
 
-
-    def __init__(self,*args,**kwargs):
-        super().__init__(*args, **kwargs)
-        
+    def _init_(self, *args, **kwargs):
+        super()._init_(*args, **kwargs)
         for field in self.fields.values():
             field.help_text = ''
-
         self.fields['username'].widget.attrs.update({'class': 'form-control form-control-user blurInput'})
         self.fields['password1'].widget.attrs.update({'class': 'form-control form-control-user blurInput'})
         self.fields['password2'].widget.attrs.update({'class': 'form-control form-control-user blurInput'})
@@ -33,15 +35,11 @@ class SigninForm(AuthenticationForm):
             ]
 
 
-    def __init__(self,*args,**kwargs):
-        super().__init__(*args, **kwargs)
+    def _init_(self,args,*kwargs):
+        super()._init_(*args, **kwargs)
         
         for field in self.fields.values():
             field.help_text = ''
 
         self.fields['username'].widget.attrs.update({'class': 'form-control form-control-user blurInput'})
         self.fields['password'].widget.attrs.update({'class': 'form-control form-control-user blurInput'})
-
-
-    
-    

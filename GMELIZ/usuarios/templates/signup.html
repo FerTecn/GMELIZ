@@ -32,8 +32,6 @@
             </div>
         </div>
 
-
-        {% comment %} {{ form.as_p }} {% endcomment %}
         <div class="form-group">
             {{form.email.label}}
             {{form.email}}
@@ -53,6 +51,11 @@
                 {{form.password2.label}}
                 {{form.password2}}
             </div>
+        </div>
+
+        <div class="form-group">
+            {{form.user_type.label}}
+            {{form.user_type}}
         </div>
     
         <button class="btn btn-primary btn-user btn-block">
