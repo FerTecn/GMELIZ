@@ -7,7 +7,7 @@ class SignupForm(UserCreationForm):
     user_type = forms.ChoiceField(
         choices=[('Cliente', 'Cliente'), ('Vendedor', 'Vendedor')],
         widget=forms.Select(attrs={'class': 'form-control blurInput'}),
-        initial='Cliente',
+      
     )
 
     class Meta:
