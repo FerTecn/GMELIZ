@@ -23,7 +23,7 @@
     <div class="card-header py-3">
         <h6 class="m-0 font-weight-bold text-primary">Detalles del Pedido</h6>
     </div>
-    <div class="card-body">
+    <div class="card-body" id="pedido-detalles">
         <h5>Folio del Pedido: {{ pedido.id }}</h5>
         <h5>Fecha realizado: {{ pedido.fecha_realizado }}</h5>
         <h5>Estatus: {{ pedido.estatus }}</h5>
@@ -38,6 +38,65 @@
             {% endfor %}
         </ul>
         <h5>Total: ${{ total_pagado }} </h5>
+
+        <!-- Botón para generar PDF -->
+        <a href="javascript:genPDF()" class="btn btn-primary">Comprobante</a>    
+        
     </div>
 </div>
+
+<!--Generar PDF-->
+            <!--  <a href="javascript:genPDF()">Comprobante</a>  -->
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+            <script type="text/javascript">
+                document.addEventListener("DOMContentLoaded", function() {
+                function genPDF(){
+                    const { jsPDF } = window.jspdf;
+                    var doc=new jsPDF({
+                        orientation: 'portrait',
+                        unit: 'mm',
+                        format: 'a4'
+                    });
+
+                    // Colores personalizados
+                    var colorTextoTitulo = "#641B40";
+                    var colorFondoHoja = "#F6EFFF";
+
+                    // Establecer el color de fondo
+                    doc.setFillColor(colorFondoHoja);
+                    doc.rect(0, 0, 210, 297, 'F');
+
+                    // Agregar título y personalizar estilo
+                    doc.setFont("helvetica", "bold");
+                    doc.setFontSize(30);
+                    doc.setTextColor(colorTextoTitulo);
+                    doc.text("GMELIZ", 105, 50, null, null, 'center');
+
+                    // Agregar subtítulo
+                    doc.setFontSize(20);
+                    doc.text("Comprobante de compra", 105, 70, null, null, 'center');
+
+                    // Línea divisoria
+                    doc.setDrawColor(colorTextoTitulo);
+                    doc.line(20, 80, 190, 80);
+
+                    // Obtener y agregar detalles del pedido
+                    var pedidoDetalles = document.getElementById("pedido-detalles").textContent;
+                    doc.setFontSize(12);
+                    doc.setTextColor(0, 0, 0);
+                    doc.text("Detalles del pedido", 20, 90);
+                    doc.text(pedidoDetalles, 20, 100);
+
+                    // Mensaje de agradecimiento
+                    doc.setFontSize(16);
+                    doc.setTextColor(colorTextoTitulo);
+                    doc.text("GRACIAS POR TU COMPRA", 105, 280, null, null, 'center');
+
+                    // Guardar el PDF
+                   doc.save('Comprobante.pdf');
+                }
+
+                window.genPDF = genPDF;
+            });
+        </script>
 {% endblock %}
